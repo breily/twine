@@ -9,7 +9,7 @@
  */
 typedef struct thread {
     int id;
-    int pri;
+    //int pri;
     ucontext_t ctx;
     struct thread *next;
 } thread;
@@ -73,17 +73,12 @@ void handle_alarm(int sig);
 void start_timer();
 
 /*
- * Switches current thread to the next lowest priority thread.
- */
-void find_next_thread();
-
-/*
  * Adds thread *t to the end of the queue.
  */
 void enqueue(thread *t);
 
 /*
- * Indicates an error and exits.  Borrowed from 'man makecontext'.
+ * Indicates an error and exits.
  */
 void die(char *msg);
 

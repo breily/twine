@@ -13,9 +13,9 @@
 static thread *current;
 // keep track of tail for convenience
 static thread *tail;
-
-static struct timeval interval = { 0, 100 };
-static struct timeval value = { 0, 10000 };
+// set thread timing info (10ms time slices, repeat alarm every .1ms)
+static struct timeval interval = { 0, 100   };
+static struct timeval value    = { 0, 10000 };
 static struct itimerval timev;
 
 void uthread_mutex_init(uthread_mutex_t *lockVar) {
@@ -97,27 +97,6 @@ int uthread_create(void (*func)(int), int val, int pri) {
 void uthread_yield() {
     // can't switch if theres nothing to switch to
     if (current->next == NULL) return;
-    /*
-    thread *low = current->next;
-    thread *low_prev = NULL;
-    thread *search = current->next;
-    thread *search_prev = NULL;
-    while (search != NULL) {
-        if (search->pri < low->pri) {
-            low_prev = search_prev;
-            low = search;
-        }
-        search_prev = search;
-        search = search->next;
-    }
-    if (low_prev != NULL) {
-        low_prev->next = low->next;
-        low->next = current->next;
-    }
-    current->next = NULL;
-    enqueue(current);
-    current = low;
-    */
     // get the next thread in the queue
     thread *t;
     t = current->next;
@@ -126,7 +105,6 @@ void uthread_yield() {
     current->next = NULL;
     enqueue(current);
     current = t;
-    //find_next_thread(THREAD_YIELD);
     start_timer();
     // switch threads
     int ret = swapcontext(&tail->ctx, &current->ctx);
@@ -134,29 +112,6 @@ void uthread_yield() {
 }
 
 void uthread_exit() {
-    /*
-    thread *low = current->next;
-    if (low == NULL) exit(0);
-    thread *low_prev = NULL;
-    thread *search = current->next;
-    thread *search_prev = NULL;
-    while(search != NULL) {
-        if (search->pri < low->pri) {
-            low_prev = search_prev;
-            low = search;
-        }
-        search_prev = search;
-        search = search->next;
-    }
-    if (low_prev != NULL) {
-        low_prev->next = low->next;
-        low->next = current->next;
-    }
-    thread *old = current;
-    current = low;
-    free(old);
-    //find_next_thread(THREAD_EXIT);
-    */
     // get the current thread, set current to the next one
     thread *old;
     old = current;
@@ -181,49 +136,6 @@ void enqueue(thread *t) {
     c->next = t;
     // make tail point to *t
     tail = t;
-}
-
-void find_next_thread(int type) {
-    sighold(SIGALRM);
-    thread *low = current->next;
-    thread *low_prev = NULL;
-    thread *search = current->next;
-    thread *search_prev = NULL;
-    while(search != NULL) {
-        if (search->pri < low->pri) {
-            low_prev = search_prev;
-            low = search;
-        }
-        search_prev = search;
-        search = search->next;
-    }
-    if (low_prev != NULL) {
-        puts("low_prev != NULL");
-        low_prev->next = low->next;
-        low->next = current->next;
-        if (type == THREAD_YIELD) {
-            current->next = NULL;
-            enqueue(current);
-            current = low;
-        } else if (type == THREAD_EXIT) {
-            thread *old = current;
-            current = low;
-            free(old);
-        }
-    } else {
-        puts("low_prev == NULL");
-        if (type == THREAD_YIELD) {
-            current->next = NULL;
-            enqueue(current);
-            current = low;
-        } else if (type == THREAD_EXIT) {
-            thread *old = current;
-            current = low;
-            free(old);
-            if (current == NULL) exit(0);
-        }
-    }
-    sigrelse(SIGALRM);
 }
 
 void die(char *msg) {
