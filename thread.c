@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <signal.h>
 #include <sys/time.h>
-#include "uthread.h"
+#include "thread.h"
 
 #define THREAD_EXIT  0
 #define THREAD_YIELD 1

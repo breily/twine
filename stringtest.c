@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "uthread.h"
+#include "thread.h"
 
 #define NUM_THREADS 3
 int test = 255;
