@@ -1,8 +1,8 @@
 
 
 vars :FLAGS   => "-D__MAKECONTEXT_V2_SOURCE -Wall",
-     :OFILES  => ["thread.o", "stringtest.o"],
-     :OUTFILE => "thread"
+     :OFILES  => ["thread.o", "twine.o"],
+     :OUTFILE => "twine"
 
 rule :all, :d => :OFILES do
     compile :o => :OUTFILE

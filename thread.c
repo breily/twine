@@ -10,20 +10,20 @@
 // stack size for our threads
 #define STACK_SIZE 1048576
 // the current running thread
-static thread *current;
+static twine_thread *current;
 // keep track of tail for convenience
-static thread *tail;
+static twine_thread *tail;
 // set thread timing info (10ms time slices, repeat alarm every .1ms)
 static struct timeval interval = { 0, 100   };
 static struct timeval value    = { 0, 10000 };
 static struct itimerval timev;
 
-void uthread_mutex_init(uthread_mutex_t *lockVar) {
+void twine_mutex_init(twine_mutex *lockVar) {
     // set lock to 0 - unlocked
     lockVar->value = 0;
 }
 
-void uthread_mutex_lock(uthread_mutex_t *lockVar) {
+void twine_mutex_lock(twine_mutex *lockVar) {
     // stop signals for atomic operation
     sighold(SIGALRM);
     // wait while lock is 1 - locked
@@ -36,7 +36,7 @@ void uthread_mutex_lock(uthread_mutex_t *lockVar) {
     sigrelse(SIGALRM);
 }
 
-void uthread_mutex_unlock(uthread_mutex_t *lockVar) {
+void twine_mutex_unlock(twine_mutex *lockVar) {
     sighold(SIGALRM);
     // set lock to unlocked
     lockVar->value = 0;
@@ -44,7 +44,7 @@ void uthread_mutex_unlock(uthread_mutex_t *lockVar) {
 }
 
 void handle_alarm(int sig) {
-    uthread_yield();
+    twine_yield();
 }
 
 void start_timer() {
@@ -56,14 +56,11 @@ void start_timer() {
     setitimer(0, &timev, NULL);
 }
 
-void uthread_init() {
+void twine_init() {
     // set up our main thread
-    thread *t = (thread *) malloc(sizeof(thread));
+    twine_thread *t = (twine_thread *) malloc(sizeof(twine_thread));
     t->id = 0;
     t->next = NULL;
-
-    // main should probably be highest priority
-    t->pri = 1;
 
     // initialize the two pointers
     current = t;
@@ -73,32 +70,30 @@ void uthread_init() {
     signal(SIGALRM, handle_alarm);
 }
 
-int uthread_create(void (*func)(int), int val, int pri) {
+int twine_create(void (*func)(int), int val) {
     // set up the thread, allocate stack, etc
-    thread *t = (thread *) malloc(sizeof(thread));
+    twine_thread *t = (twine_thread *) malloc(sizeof(twine_thread));
     int ret = getcontext(&t->ctx);
-    if (ret == -1) die("uthread_create: getcontext()");
+    if (ret == -1) die("twine_create: getcontext()");
     t->ctx.uc_stack.ss_sp = malloc(STACK_SIZE);
     t->ctx.uc_stack.ss_size = STACK_SIZE;
     t->ctx.uc_link = &tail->ctx;
     makecontext(&t->ctx, (void (*)(void)) func, 1, val);
 
     // set other information, add to end of queue
-    t->pri = pri;
     t->id = tail->id + 1;
     t->next = NULL;
     enqueue(t);
-    //tail = t;
 
     // return the id
     return t->id;
 }
 
-void uthread_yield() {
+void twine_yield() {
     // can't switch if theres nothing to switch to
     if (current->next == NULL) return;
     // get the next thread in the queue
-    thread *t;
+    twine_thread *t;
     t = current->next;
 
     // add the current thread to the end of the queue
@@ -108,12 +103,12 @@ void uthread_yield() {
     start_timer();
     // switch threads
     int ret = swapcontext(&tail->ctx, &current->ctx);
-    if (ret == -1) die("uthread_yield: swapcontext()");
+    if (ret == -1) die("twine_yield: swapcontext()");
 }
 
-void uthread_exit() {
+void twine_exit() {
     // get the current thread, set current to the next one
-    thread *old;
+    twine_thread *old;
     old = current;
     current = current->next;
 
@@ -126,11 +121,11 @@ void uthread_exit() {
     // no need to get or swap contexts because we're exiting
     // this thread
     int ret = setcontext(&current->ctx);
-    if (ret == -1) die("uthread_exit: setcontext()");
+    if (ret == -1) die("twine_exit: setcontext()");
 }
 
 void enqueue(thread *t) {
-    thread *c;
+    twine_thread *c;
     c = tail;
     // make the last thread's next point to *t
     c->next = t;
