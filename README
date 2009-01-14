@@ -1,7 +1,7 @@
                                                      
 (                                                  (
  )                                                  )
-(  String - An Unassuming Little Threading Library (
+(  Twine -- An Unassuming Little Threading Library (
  ) -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-  )
 (       (    )    (      )      )  (    (   )   )  (
  )       )  (      )    (      (    )    ) (   (    )
@@ -13,5 +13,21 @@
 (   Features
  )
 
+-- Easy userspace threads
+-- Thread preemption after 10ms time slice
+-- Mutexes
 
 
+ )
+(   Usage
+ )
+
+-- The best way to learn this is to look at simpletwine.c
+
+
+(
+ )  Install/Setup
+( 
+
+-- There is no install code, but I figure you guys know where to put
+   stuff on your own system.

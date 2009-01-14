@@ -19,27 +19,22 @@ static struct timeval value    = { 0, 10000 };
 static struct itimerval timev;
 
 void twine_mutex_init(twine_mutex *lockVar) {
-    // set lock to 0 - unlocked
-    lockVar->value = 0;
+    lockVar->value = 0;         // 0 = unlocked
 }
 
 void twine_mutex_lock(twine_mutex *lockVar) {
-    // stop signals for atomic operation
-    sighold(SIGALRM);
-    // wait while lock is 1 - locked
-    while (lockVar->value) {
+    sighold(SIGALRM);           // stop signals for atomic operation
+    while (lockVar->value) {    // wait while lock is 1 (locked)
         sigrelse(SIGALRM);
         sighold(SIGALRM);
     }
-    // set lock to locked
-    lockVar->value = 1;
+    lockVar->value = 1;         // 1 = locked
     sigrelse(SIGALRM);
 }
 
 void twine_mutex_unlock(twine_mutex *lockVar) {
     sighold(SIGALRM);
-    // set lock to unlocked
-    lockVar->value = 0;
+    lockVar->value = 0;         // 0 = unlocked
     sigrelse(SIGALRM);
 }
 
@@ -57,7 +52,7 @@ void start_timer() {
 }
 
 void twine_init() {
-    // set up our main thread
+    // set up our main (current) thread
     twine_thread *t = (twine_thread *) malloc(sizeof(twine_thread));
     t->id = 0;
     t->next = NULL;

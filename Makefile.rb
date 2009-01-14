@@ -1,4 +1,6 @@
-
+comment "Makefile for the Twine threading library"
+comment "$ make all     # Build library + test program"
+comment "$ make lib     # Build library (thread.o)"
 
 vars :FLAGS   => "-D__MAKECONTEXT_V2_SOURCE -Wall",
      :OFILES  => ["thread.o", "twine.o"],
