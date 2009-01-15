@@ -33,3 +33,26 @@
 -- Only compiles on Linux (or anything with the makecontext, 
    setcontext, etc. functions, which for some reason are
    missing on OSX).
+
+( 
+ )  Improvements
+(
+
+-- I'm probably not going to do any more work on this, but if I
+   were, here are some possible improvements that could be made -
+   or you could fork, implement them or others, and I'll pull it 
+   back.
+
+-- Currently the twine_create function only accepts functions that
+   return void and have one argument.  I know of no way of getting
+   around the void return, but you can allow more arguments by
+   changing our call to makecontext in thread.c.  makecontext's 
+   args are these: ucontext_t struct, function pointer, number
+   of arguments to that function, and the arguments of that function
+   make up the last of makecontext's arguments.
+
+-- Figuring out a better slice time (10ms was pretty much picked
+   at random), or letting the user set it when he calls twine_init.
+
+-- Priority scheduling - I had planned on having it, but I never got
+   around to it.
