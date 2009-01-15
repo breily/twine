@@ -8,7 +8,7 @@ int main() {
     // Initialize Twine
     twine_init();
 
-    // Create two threads and adds them to the queue
+    // Create two threads and add them to the queue
     twine_create(foo, 1);
     twine_create(foo, 2);
 

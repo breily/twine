@@ -25,6 +25,12 @@
 -- Look at simplethreads.c to see basic thread usage,
    and simplemutex.c for mutex usage.
 
+-- But basically:
+    
+    twine_init();           // start the library
+    twine_create(foo, x);   // create a thread
+    twine_yield();          // yield control to another thread
+
 
 (
  )  Notes
@@ -33,6 +39,7 @@
 -- Only compiles on Linux (or anything with the makecontext, 
    setcontext, etc. functions, which for some reason are
    missing on OSX).
+
 
 ( 
  )  Improvements
@@ -46,10 +53,8 @@
 -- Currently the twine_create function only accepts functions that
    return void and have one argument.  I know of no way of getting
    around the void return, but you can allow more arguments by
-   changing our call to makecontext in thread.c.  makecontext's 
-   args are these: ucontext_t struct, function pointer, number
-   of arguments to that function, and the arguments of that function
-   make up the last of makecontext's arguments.
+   changing our call to makecontext in thread.c.  See
+   /usr/includes/ucontext.h for details.
 
 -- Figuring out a better slice time (10ms was pretty much picked
    at random), or letting the user set it when he calls twine_init.
