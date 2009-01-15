@@ -22,12 +22,14 @@
 (   Usage
  )
 
--- The best way to learn this is to look at simpletwine.c
+-- Look at simplethreads.c to see basic thread usage,
+   and simplemutex.c for mutex usage.
 
 
 (
- )  Install/Setup
+ )  Notes
 ( 
 
--- There is no install script, but I figure you know where to put
-   stuff on your own system.
+-- Only compiles on Linux (or anything with the makecontext, 
+   setcontext, etc. functions, which for some reason are
+   missing on OSX).

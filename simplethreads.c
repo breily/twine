@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "thread.h"
 
-void foo(int s);
+void foo(int th);
 
 int main() {
     twine_init();
@@ -9,16 +9,16 @@ int main() {
     twine_create(foo, 2);
 
     int i;
-    for (i = 0; i < 10; i++) {
-        printf("** thread 0\n");
+    for (i = 0; i < 5; i++) {
+        printf("** thread 0 working...\n");
         twine_yield();
     }
 }
 
-void foo(int s) {
+void foo(int th) {
     int i;
-    for (i = 0; i < 10; i++) {
-        printf("** thread %d\n", i);
+    for (i = 0; i < 5; i++) {
+        printf("** thread %d working...\n", th);
         twine_yield();
     }
 }

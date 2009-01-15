@@ -119,7 +119,7 @@ void twine_exit() {
     if (ret == -1) die("twine_exit: setcontext()");
 }
 
-void enqueue(thread *t) {
+void enqueue(twine_thread *t) {
     twine_thread *c;
     c = tail;
     // make the last thread's next point to *t

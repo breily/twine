@@ -2,16 +2,21 @@ comment "Makefile for the Twine threading library"
 comment "$ make all     # Build library + test program"
 comment "$ make lib     # Build library (thread.o)"
 
-vars :FLAGS   => "-D__MAKECONTEXT_V2_SOURCE -Wall",
-     :OFILES  => ["thread.o", "twine.o"],
-     :OUTFILE => "twine"
+vars :FLAGS => "-D__MAKECONTEXT_V2_SOURCE -Wall"
 
-rule :all, :d => :OFILES do
-    compile :o => :OUTFILE
+rule "all", :d => ["simplemutex", "simplethreads"]
+
+rule "simplemutex", :d => ["thread.o", "simplemutex.o"] do
+    compile :o => "simplemutex"
+end
+
+rule "simplethreads", :d => ["thread.o", "simplethreads.o"] do
+    compile :o => "simplethreads"
 end
 
 rule :lib do
     compile :obj, :i => "thread.c", :o => "thread.o"
 end
 
-clean :OFILES, :OUTFILE
+clean "thread.o", "simplethreads.o", "simplemutex.o",
+      "simplethreads", "simplemutex"
