@@ -4,12 +4,21 @@
 void foo(int s);
 
 int main() {
-    //Initiliaze the library
     twine_init();
+    twine_create(foo, 1);
+    twine_create(foo, 2);
 
-    twine_create(foo, 23);
-    twine_create(foo, 33);
+    int i;
+    for (i = 0; i < 10; i++) {
+        printf("** thread 0\n");
+        twine_yield();
+    }
+}
 
-    
-
+void foo(int s) {
+    int i;
+    for (i = 0; i < 10; i++) {
+        printf("** thread %d\n", i);
+        twine_yield();
+    }
 }
