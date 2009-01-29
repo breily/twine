@@ -22,8 +22,8 @@
 (   Usage
  )
 
--- Look at simplethreads.c to see basic thread usage,
-   and simplemutex.c for mutex usage.
+-- Look at thread_test.c to see basic thread usage,
+   and mutex_test.c for mutex usage.
 
 -- But basically:
     
